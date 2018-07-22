@@ -1,5 +1,5 @@
 # card-games
-# python classes for making card games
+ A collection of Python classes and scripts for using card games in Monte Carlo simulations and Machine Learning.
 
 # Deck.py
 Deck.py is a class for a deck of cards.
