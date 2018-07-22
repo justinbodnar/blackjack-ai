@@ -32,7 +32,8 @@ def hand_value( hand, player ):
 			card1 = card[:1]
 			# deal with the Ace situation
 			if card1 is "A":
- 				print( "Count Ace as 1 or 11?" )
+				 
+				print( "Count Ace as 1 or 11?" )
 				choice = raw_input()
 				if choice is "1":
 					card1 = 1
@@ -102,14 +103,16 @@ while True:
 	print
 #	print( "Dealer's count: " + str( hand_value( dealers_hand, 2 ) ) )
 	summ = hand_value( players_hand, 1 )
-#	print( "Player's count: " + str( summ ) )
-
-	if summ > 21:
-		print( "Bust!" )
-		pause = raw_input( "Press Enter to continue:" )
+	if summ is 21 and hand_value( dealers_hand, 2 ) is 21:
+		print( "21 each." )
+		print( "TIED GAME" )
 		continue
-	elif summ is 21:
-		print( "21!" )
+	elif summ is 21 and hand_value( dealers_hand, 2 ) is not 21:
+		print( "BlackJack!" )
+		print( "PLAYER WINS" )
+	elif summ > 21:
+		print( "Bust." )
+		print( "PLAYER LOSES" )
 		pause = raw_input( "Press Enter to continue:" )
 		continue
 	else:
@@ -142,11 +145,12 @@ while True:
 #			print( "Player's count: " + str( hand_value( players_hand, 1 ) ) )
 			summ = hand_value( players_hand, 1 )
 			if summ > 21:
-				print( "Bust!" )
+				print( "Bust." )
+				print( "PLAYER LOSES" )
 				pause = raw_input( "Press Enter to continue:" )
 				flag = True
 			elif summ is 21:
-				print( "21!" )
+				print( "21" )
 				pause = raw_input( "Press Enter to continue:" )
 				flag = True
 			else:
@@ -207,10 +211,8 @@ while True:
 				print( "Player: " + players_hand_str )
 				if summ > players_summ:
 					print( "PLAYER LOSES" )
-					print
 					pause = raw_input( "Press Enter to continue: " )
 				else:
 					print( "PLAYER WINS" )
-					print
 					pause = raw_input( "Press Enter to continue: " )			
 			flag = True
