@@ -142,3 +142,5 @@ Example
 The data set consists of 5,323 entries, located in data_sets/blackjack.data.2 and data_sets/blackjack.tags.2.. The neural network used a similar layer scheme as the previous, with an 8-neuron second layer. The optimizer was 'nadam,' and there were 100 epochs.
 
 The model has an accuracy of 0.74. A slightly better accuracy than model #1.
+
+![Basic Blackjack Strategy](https://raw.githubusercontent.com/justinbodnar/artificial-intelligence-in-card-games/master/docs/blackjack_odds.png)
