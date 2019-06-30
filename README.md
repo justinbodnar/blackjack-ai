@@ -11,11 +11,14 @@ deck = Deck()
 
 Functions
 	
-deck.shuffle() # returns the array to 52 randomly organized card strings.
+deck.shuffle()
+returns the array to 52 randomly organized card strings.
 
-deck.deal() # removes a card string from the Deck object, and returns it
+deck.deal()
+removes a card string from the Deck object, and returns it
 
-deck.checkDeck() # prints the current content of the deck
+deck.checkDeck()
+prints the current content of the deck
 
 
 # blackjack.py
