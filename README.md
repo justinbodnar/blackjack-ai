@@ -72,5 +72,59 @@ generated data and tag
 14, s
 </pre>
 
+# first Blackjack model
 
+The first model was trained on 3,959 monte carlo simulations, and has a 70% accuracy rate. The serialized model can be found in the /models/ directory as blackjackmodel.h5 and blackjackmodel.json.
 
+The model was a dense 2-layer neurel network. The first layer contained 4096 neurons, while the second only had two, for 'hit' or 'stay.' The 'adam' optimizer was used, with a loss of 'sparse_categorical_crossentropy.' Training and testing data was split 50/50 randomly. There were 10 epochs.
+
+To find a heuristic, hand values from 2-21 were tested on the classifier.
+
+<pre>
+0
+hit
+1
+hit
+2
+hit
+3
+hit
+4
+hit
+5
+hit
+6
+hit
+7
+hit
+8
+hit
+9
+hit
+10
+hit
+11
+hit
+12
+hit
+13
+hit
+14
+hit
+15
+hit
+16
+hit
+17
+stay
+18
+stay
+19
+stay
+20
+stay
+</pre>
+
+The model learned to hit on any hand value below 17. This happens to be the strategy used by the dealer.
+
+Future data sets and models will focus learning more about the hand, ie. dealers cards, counting how many times a player has hit, etc. The longer term goal is to teach a model to count cards.
