@@ -55,7 +55,7 @@ dealer busts
 generated data and tags:
 (because we won the game, we assume every move was a good move)
 7,  h # hit on 7
-19, s # stay on 17
+19, s # stay on 19
 
 Example 2
 

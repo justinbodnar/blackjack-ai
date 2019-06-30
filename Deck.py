@@ -18,7 +18,7 @@ class Deck:
 	def __init__( self ):
 		self.cards = [ ]
 		self.suits = [ "c", "s", "d", "h" ]
-		self.values = [ "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13" ]
+		self.values = [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13" ]
 		self.shuffle()
 
 	# this is to test the class

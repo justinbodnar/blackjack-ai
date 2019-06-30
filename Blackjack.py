@@ -2,40 +2,35 @@
 # an implementation of the classic card game using justinbodnar/Deck.py
 
 from Deck import Deck
+import random as rand
 
 # instantiate deck of cards
 deck = Deck()
 
 # function to count the value of a given hand
 # 'player' param is 1 for player, 2 for dealer
-def hand_value( hand, player ):
+def hand_value( hand ):
 
-	players_summ = 0
 	summ = 0
 
-	# if its a players hand
-	if player is 1:
-		# loop through cards in a hand
-		for card in hand:
-			# grab first character of the card
-			card1 = int( card[:card.index('-')] )
-			# deal with the Ace situation
-			summ = summ + card1
-
-	# if its the dealers hand
-	elif player is 2:
-		# loop through cards in a hand
-		for card in hand:
-			# grab first character of the card
-			card1 = int( card[:card.index('-')] )
-			summ = summ + card1
+	for card in hand:
+		# grab first character of the card
+		card1 = int( card[:card.index('-')] )
+		# deal with the face card
+		if card1 > 10:
+			card1 = 10
+		summ = summ + card1
 
 	return summ
 
-########################################
-# function for single monte carlo hand #
-########################################
-def rand_hand():
+############################
+# function for single hand #
+############################
+def hand( montecarlo, debug ):
+
+	# these lists are for collecting data
+	data = []
+	tags = []
 
 	# get cards ready
 	deck.shuffle()
@@ -44,6 +39,8 @@ def rand_hand():
 	dealers_hand = [ ]
 	players_hand = [ ]
 
+	# this is for monte carlo simulations
+	choices = [ 'h', 's' ]
 
 	# deal the cards
 	# players get two cards face-up
@@ -52,111 +49,139 @@ def rand_hand():
 	players_hand = [ deck.deal(), deck.deal() ]
 
 	# print current game
-	print( "Dealer: " + dealers_hand[0] + "   " + "x-x")
-	print
-	print( "Player: " + players_hand[0] + "   " + players_hand[1] )
-	print
+	if debug:
+		print( "Dealer: " + dealers_hand[0] + "   " + "x-x")
+		print( "Player: " + players_hand[0] + "   " + players_hand[1] )
 
 	# check for win/loss
-	summ = hand_value( players_hand, 1 )
-	if summ is 21 and hand_value( dealers_hand, 2 ) is 21:
-		print( "21 each." )
-		print( "TIED GAME" )
-		return
-	elif summ is 21 and hand_value( dealers_hand, 2 ) is not 21:
-		print( "BlackJack!" )
-		print( "PLAYER WINS" )
-		return
+	summ = hand_value( players_hand )
+	if summ is 21 and hand_value( dealers_hand ) is 21:
+		if debug:
+			print( "21 each." )
+			print( "TIE" )
+		return data, tags
+	elif summ is 21 and hand_value( dealers_hand ) is not 21:
+		if debug:
+			print( "BlackJack!" )
+			print( "PLAYER WINS" )
+		return data, tags
 	elif summ > 21:
-		print( "Bust." )
-		print( "PLAYER LOSES" )
-		return
+		if debug:
+			print( "Bust." )
+			print( "PLAYER LOSES" )
+		return data, tags
 	else:
 		players_summ = summ
 
 	# hit up to 5 times
 	for i in range(5):
 		#  hit or stay?
-		print( "Hit or stay? (Enter 'h' or 's'): " )
-		choice = raw_input()
+		if montecarlo:
+			choice = choices[rand.randint(0,1)]
+#			choice = "h"
+		else:
+			print( "Hit or stay? (Enter 'h' or 's'): " )
+			choice = raw_input()
 
 		# if hitting
 		if choice is "h":
+			# add data
+			data = data + [ hand_value( players_hand ) ]
 			# hit
-			print( "Hitting" )
 			players_hand = players_hand + [ deck.deal() ]
-			# print current game
-			players_hand_str = ""
-			for card in players_hand:
-				players_hand_str = players_hand_str + card + "   "
-			print( "\n\n" )
-			print( "Dealer: " + dealers_hand[0] + "   " + "x-x")
-			print
-			print( "Player: " + players_hand_str )
-			print
-			summ = hand_value( players_hand, 1 )
+			summ = hand_value( players_hand )
+			if debug:
+				print( "Hitting" )
+				players_hand_str = ""
+				for card in players_hand:
+					players_hand_str = players_hand_str + card + "   "
+				print( "Dealer: " + dealers_hand[0] + "   " + "x-x")
+				print( "Player: " + players_hand_str )
 			if summ > 21:
-				print( "Bust." )
-				print( "PLAYER LOSES" )
-				return
+				# add tag
+				tags = tags + [ 's' ]
+				if debug:
+					print( "Bust." )
+					print( "PLAYER LOSES" )
+				return data, tags
 			elif summ is 21:
-				print( "21" )
-				return
+				# add tag
+				tags = tags + [ 'h' ]
+				if debug:
+					print( "21" )
+				return data, tags
 			else:
+				# add tag
+				tags = tags + [ 'h' ]
 				players_summ = summ
 
 		# if staying
 		else:
-			# stay
-			print( "Staying" )
-			# print current game
-			players_hand_str = ""
-			for card in players_hand:
-				players_hand_str = players_hand_str + card + "   "
-			# check if dealer needs card
-			while hand_value( dealers_hand, 2 ) < 17:
+			# add data
+			data = data + [ hand_value( players_hand ) ]
+			if debug:
 				print( "Staying" )
-				print
+				# print current game
+				players_hand_str = ""
+				for card in players_hand:
+					players_hand_str = players_hand_str + card + "   "
+			# check if dealer needs card
+			while hand_value( dealers_hand ) < 17:
 				dealers_hand = dealers_hand + [ deck.deal() ]
-				print( "Dealer hits." )
-				# print dealers hand
-				dealers_hand_str = ""
-				for card in dealers_hand:
-					dealers_hand_str = dealers_hand_str + card + "   "
-				print( "Dealer: " + dealers_hand_str )
-				print( "Player: " + players_hand_str )
-				print
+				if debug:
+					print( "Dealer hits" )
+					dealers_hand_str = ""
+					for card in dealers_hand:
+						dealers_hand_str = dealers_hand_str + card + "   "
+					print( "Dealer: " + dealers_hand_str )
+					print( "Player: " + players_hand_str )
 			# check winner
-			summ = hand_value( dealers_hand, 2 )
+			summ = hand_value( dealers_hand )
 			if summ > 21:
-				dealers_hand_str = ""
-				for card in dealers_hand:
-					dealers_hand_str = dealers_hand_str + card + "   "
-				print( "Dealer: " + dealers_hand_str )
-				print( "Player: " + players_hand_str )
-				print( "Dealer busts." )
-				print( "PLAYER WINS" )
-				return
-			elif summ is 21:
-				dealers_hand_str = ""
-				for card in dealers_hand:
-					dealers_hand_str = dealers_hand_str + card + "   "
-				print( "Dealer: " +  dealers_hand_str )
-				print( "Player: " + players_hand_str )
-				print( "Dealer has 21." ) 
-				print( "PLAYER LOSES" )
-				return
-			else:
-				dealers_hand_str = ""
-				for card in dealers_hand:
-					dealers_hand_str = dealers_hand_str + card + "   "
-				print( "Dealer: " + dealers_hand_str )
-				print( "Player: " + players_hand_str )
-				if summ > players_summ:
-					print( "PLAYER LOSES" )
-					return
-				else:
+				# add tag
+				tags = tags + [ 's' ]
+				if debug:
+					dealers_hand_str = ""
+					for card in dealers_hand:
+						dealers_hand_str = dealers_hand_str + card + "   "
+					print( "Dealer: " + dealers_hand_str )
+					print( "Player: " + players_hand_str )
+					print( "Dealer busts." )
 					print( "PLAYER WINS" )
-					return
+				return data, tags
+			elif summ is 21:
+				# add tag
+				tags = tags + [ 'h' ]
+				if debug:
+					dealers_hand_str = ""
+					for card in dealers_hand:
+						dealers_hand_str = dealers_hand_str + card + "   "
+					print( "Dealer: " +  dealers_hand_str )
+					print( "Player: " + players_hand_str )
+					print( "Dealer has 21." ) 
+					print( "PLAYER LOSES" )
+				return data, tags
+			else:
+				if debug:
+					dealers_hand_str = ""
+					for card in dealers_hand:
+						dealers_hand_str = dealers_hand_str + card + "   "
+					print( "Dealer: " + dealers_hand_str )
+					print( "Player: " + players_hand_str )
+				if summ > players_summ:
+					# add tag
+					tags = tags + [ 'h' ]
+					if debug:
+						print( "PLAYER LOSES" )
+					return data, tags
+				else:
+					# add tag
+					tags = tags + [ 's' ]
+					if debug:
+						print( "PLAYER WINS" )
+					return data, tags
 
-rand_hand()
+data, tags = hand( True, False )
+
+print( data )
+print( tags )
