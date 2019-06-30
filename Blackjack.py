@@ -181,7 +181,19 @@ def hand( montecarlo, debug ):
 						print( "PLAYER WINS" )
 					return data, tags
 
-data, tags = hand( True, False )
+# loop through a thousand simulations
+for i in range( 10000 ):
+	print( i )
+	data, tags = hand( True, False )
 
-print( data )
-print( tags )
+	print( data )
+	print( tags )
+
+	dataf = open( "data_sets/blackjack.data.1", "a" )
+	tagf = open( "data_sets/blackjack.tags.1", "a" )
+	for datum in data:
+		dataf.write( str( datum ) + "\n" )
+	for tag in tags:
+		tagf.write( tag  + "\n" )
+	dataf.close()
+	tagf.close()
