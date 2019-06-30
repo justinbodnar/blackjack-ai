@@ -86,7 +86,7 @@ def hand( montecarlo, debug ):
 		# if hitting
 		if choice is "h":
 			# add data
-			data = data + [ hand_value( players_hand ) ]
+			data = data + [ [ hand_value( players_hand ), int( dealers_hand[0][:dealers_hand[0].index('-')] ) ] ]
 			# hit
 			players_hand = players_hand + [ deck.deal() ]
 			summ = hand_value( players_hand )
@@ -118,7 +118,7 @@ def hand( montecarlo, debug ):
 		# if staying
 		else:
 			# add data
-			data = data + [ hand_value( players_hand ) ]
+			data = data + [ [ hand_value( players_hand ), int( dealers_hand[0][:dealers_hand[0].index('-')] ) ] ]
 			if debug:
 				print( "Staying" )
 				# print current game
@@ -185,15 +185,15 @@ def hand( montecarlo, debug ):
 # data points to the blackjack data set
 def gen_data_set( ):
 	# loop through a thousand simulations
-	for i in range( 3000 ):
+	for i in range( 2000 ):
 		print( i )
 		data, tags = hand( True, False )
 
 		print( data )
 		print( tags )
 
-		dataf = open( "data_sets/blackjack.data.1", "a" )
-		tagf = open( "data_sets/blackjack.tags.1", "a" )
+		dataf = open( "data_sets/blackjack.data.2", "a" )
+		tagf = open( "data_sets/blackjack.tags.2", "a" )
 		for datum in data:
 			dataf.write( str( datum ) + "\n" )
 		for tag in tags:
