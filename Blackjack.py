@@ -135,6 +135,7 @@ while True:
 			# add 'h' to data
 			data = data + [ 'h' ]
 			players_hand = players_hand + [ deck.deal() ]
+			data = data + [ str( player_summ( players_hand, 1 ) ) ]
 			# print current game
 			players_hand_str = ""
 			for card in players_hand:
