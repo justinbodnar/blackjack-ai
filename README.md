@@ -143,4 +143,12 @@ The data set consists of 5,323 entries, located in data_sets/blackjack.data.2 an
 
 The model has an accuracy of 0.74. A slightly better accuracy than model #1.
 
+I found this nifty chart for Blackjack strategy at https://wizardofodds.com/games/blackjack/strategy/calculator/ . This will be compared to the results of the classifier
+
+from wizardofodds.com
 ![Basic Blackjack Strategy](https://raw.githubusercontent.com/justinbodnar/artificial-intelligence-in-card-games/master/docs/blackjack_odds.png)
+
+from Blackjack model #2
+![Blackjack classifier results](https://raw.githubusercontent.com/justinbodnar/artificial-intelligence-in-card-games/master/docs/blackjack_odds_mine.png)
+
+There is a clear pattern on both. This confirms the neural network has begun to learn the strategy of Blackjack.
