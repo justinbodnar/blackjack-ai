@@ -6,17 +6,6 @@ from Deck import Deck
 # instantiate deck of cards
 deck = Deck()
 
-# hands will be represented as lists of strings
-dealers_hand = [ ]
-players_hand = [ ]
-
-# function to clear the screen
-def clear():
-	i = 0
-	while i < 30:
-		print
-		i = i + 1
-
 # function to count the value of a given hand
 # 'player' param is 1 for player, 2 for dealer
 def hand_value( hand, player ):
@@ -80,40 +69,53 @@ def hand_value( hand, player ):
 # loop through rounds
 while True:
 
+	# this is the data we need
+	# the data array holds 3 pieces of info:
+	# the value of the current hand, whether it was hit/stay
+	# the outcome as 'w' or 'l'
+	data = []
+
+	choices = [ "hit", "stay" ]
+
 	flag = False
-		
+
 	# empty all hands to deck
 	deck.shuffle()
 	dealers_hand = [ ]
 	players_hand = [ ]
-	
 
-	# deal the cards 
+
+	# deal the cards
 	# players get two cards face-up
 	# dealer gets one face-up, one face-down
 	dealers_hand = [ deck.deal(), deck.deal() ]
 	players_hand = [ deck.deal(), deck.deal() ]
 
+	# add first datum
+	data = data + [ str( hand_value( players_hand, 1 ) ) ]
+
 	# print current game
-#	pause = raw_input( "Press Enter to play a hand: " )
-	clear()
 	print( "Dealer: " + dealers_hand[0] + "   " + "x-x")
 	print
 	print( "Player: " + players_hand[0] + "   " + players_hand[1] )
 	print
-#	print( "Dealer's count: " + str( hand_value( dealers_hand, 2 ) ) )
 	summ = hand_value( players_hand, 1 )
 	if summ is 21 and hand_value( dealers_hand, 2 ) is 21:
 		print( "21 each." )
 		print( "TIED GAME" )
+		# add 'w' to data
+		data = data + [ 'w' ]
 		continue
 	elif summ is 21 and hand_value( dealers_hand, 2 ) is not 21:
 		print( "BlackJack!" )
 		print( "PLAYER WINS" )
+		# add 'w' to data
+		data = data + [ 'w' ]
 	elif summ > 21:
 		print( "Bust." )
 		print( "PLAYER LOSES" )
-		pause = raw_input( "Press Enter to continue:" )
+		# add 'l' to data
+		data = data + [ 'l' ]
 		continue
 	else:
 		players_summ = summ
@@ -126,11 +128,12 @@ while True:
 		#  hit or stay?
 		print( "Hit or stay? (Enter 'h' or 's'): " )
 		choice = raw_input()
-		clear()
 	
 		if choice is "h":
 			# hit
 			print( "Hitting" )
+			# add 'h' to data
+			data = data + [ 'h' ]
 			players_hand = players_hand + [ deck.deal() ]
 			# print current game
 			players_hand_str = ""
@@ -147,10 +150,14 @@ while True:
 			if summ > 21:
 				print( "Bust." )
 				print( "PLAYER LOSES" )
+				# add 'l' to data
+				data = data + [ 'l' ]
 				pause = raw_input( "Press Enter to continue:" )
 				flag = True
 			elif summ is 21:
 				print( "21" )
+				# add 'w' to data
+				data = data + [ 'w' ]
 				pause = raw_input( "Press Enter to continue:" )
 				flag = True
 			else:
@@ -158,15 +165,15 @@ while True:
 
 		else:
 			# stay
-			clear()
 			print( "Staying" )
+			# add 's' to data
+			data = data + [ 's' ]
 			# print current game
 			players_hand_str = ""
 			for card in players_hand:
 				players_hand_str = players_hand_str + card + "   "
 			# check if dealer needs card
 			while hand_value( dealers_hand, 2 ) < 17:
-				clear()
 				print( "Staying" )
 				print
 				dealers_hand = dealers_hand + [ deck.deal() ]
@@ -182,7 +189,6 @@ while True:
 			# check winner
 			summ = hand_value( dealers_hand, 2 )
 			if summ > 21:
-				clear()
 				dealers_hand_str = ""
 				for card in dealers_hand:
 					dealers_hand_str = dealers_hand_str + card + "   "
@@ -190,10 +196,11 @@ while True:
 				print( "Player: " + players_hand_str )
 				print( "Dealer busts." )
 				print( "PLAYER WINS" )
+				# add 'w' to data
+				data = data + [ 'w' ]
 				print
 				pause = raw_input( "Press Enter to continue: " )
 			elif summ is 21:
-				clear()
 				dealers_hand_str = ""
 				for card in dealers_hand:
 					dealers_hand_str = dealers_hand_str + card + "   "
@@ -202,6 +209,8 @@ while True:
 				print( "Dealer has 21." ) 
 				print( "PLAYER LOSES" )
 				print
+				# add 'l' to data
+				data = data + [ 'l' ]
 				pause = raw_input( "Press Enter to continue: " )
 			else:
 				dealers_hand_str = ""
@@ -211,8 +220,13 @@ while True:
 				print( "Player: " + players_hand_str )
 				if summ > players_summ:
 					print( "PLAYER LOSES" )
+					# add 'l' to data
+					data = data + 'l'
 					pause = raw_input( "Press Enter to continue: " )
 				else:
 					print( "PLAYER WINS" )
+					# add 'w' to data
+					data = data + [ 'w' ]
 					pause = raw_input( "Press Enter to continue: " )			
 			flag = True
+	print( data )
