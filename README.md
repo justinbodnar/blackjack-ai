@@ -74,7 +74,7 @@ generated data and tag
 14, s
 </pre>
 
-# first Blackjack model - data set level 1
+# First Blackjack model - data set level 1
 
 The first model teaches a neural net to play based soley on the value of the current hand. A data set for this task was produced with 3,959 monte carlo simulations generated with Blackjack.py. The data set is located at /data_sets/blackjack.data.1 and /data_sets/blackjack.tags.1.
 
