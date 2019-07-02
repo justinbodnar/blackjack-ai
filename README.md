@@ -1,8 +1,8 @@
-# card-games
-A collection of Python classes and scripts for using card games in Monte Carlo simulations and Machine Learning.
+# Artificial Intelligence in Blackjack Card Counting
+A python library for teaching TensorFlow neural networks to play Blackjack and count cards.
 
 # blackjack.py
-Blackjack.py is an implementation of the classic card game using the Deck class, and played from the terminal. This script is used to generate data about hands of blackjack via Monte Carlo simulations. This is done by generating random hands and storing representations of the hands, tagged with the eventual outcome of the decision.
+Blackjack.py is an implementation of the game using the Deck class, and played from the terminal. This script is used to generate data about hands of blackjack via Monte Carlo simulations. This is done by generating random hands and storing representations of the hands, tagged with the eventual outcome of the decision.
 
 # representing a hand of blackjack
 
@@ -54,11 +54,104 @@ generated data and tag
 
 # first Blackjack model
 
-The first model was trained on 3,959 monte carlo simulations, and has a 70% accuracy rate. The serialized model can be found in the /models/ directory as blackjackmodel.h5 and blackjackmodel.json.
+The first model teaches a neural net to play based soley on the value of the current hand. A data set for this task was produced with 3,959 monte carlo simulations generated with Blackjack.py. The data set is located at /data_sets/blackjack.data.1 and /data_sets/blackjack.tags.1.
 
-The model was a dense 2-layer neurel network. The first layer contained 4096 neurons, while the second only had two, for 'hit' or 'stay.' The 'adam' optimizer was used, with a loss of 'sparse_categorical_crossentropy.' Training and testing data was split 50/50 randomly. There were 10 epochs.
+code for preprocessing the data set
 
-To find a heuristic, hand values from 2-21 were tested on the classifier.
+<pre>
+# get the data set
+data = open( "data_sets/blackjack.data.1").readlines()
+tags = open( "data_sets/blackjack.tags.1").readlines()
+data_clean = []
+tags_clean = []
+#strip whitespace
+first = True
+for datum in data:
+	# skip empty line first
+	if first:
+		first = False
+		continue
+	clean_datum = datum[1:datum.index('\n')-1].strip().split(', ')
+	clean_datum[0] = int( clean_datum[0] )
+	clean_datum[1] = int( clean_datum[1] )
+	print( clean_datum )
+	data_clean = data_clean + [ clean_datum ]
+
+first = True
+for tag in tags:
+	if first:
+		first = False
+		continue
+	tag = tag[:tag.index('\n')]
+	if tag is "h":
+		tags_clean = tags_clean + [ 1.0 ]
+	else:
+		tags_clean = tags_clean + [ 0.0 ]
+
+size = int( len(data)*(0.75) )
+
+train_data = np.array( data_clean[1:size] )
+train_tags = np.array( tags_clean[1:size] )
+test_data = np.array( data_clean[size:] )
+test_tags = np.array( tags_clean[size:] )
+</pre>
+
+The model in this example a dense 2-layer neurel network. The first layer contained 4096 neurons, while the second only had two, for 'hit' or 'stay.' The 'adam' optimizer was used, with a loss of 'sparse_categorical_crossentropy.' Training and testing data was split 50/50 randomly. There are 10 epochs.
+
+code for training the model
+
+<pre>
+model = keras.Sequential()
+model.add( keras.layers.Dense(4096, input_dim=2) )
+model.add( keras.layers.Dense(2, activation=tf.nn.softmax) )
+model.compile(optimizer='adam',
+	loss='sparse_categorical_crossentropy',
+	metrics=['accuracy'])
+model.fit(train_data, train_tags, epochs=10)
+test_loss, test_acc = model.evaluate(test_data, test_tags)
+print('Test accuracy:', test_acc)
+</pre>
+
+The model will output the accuracy of the model, using a random 25% of input as test cases. The model can then be saved via
+
+<pre>
+# save model
+# taken from https://machinelearningmastery.com/save-load-keras-deep-learning-models/
+model_json = model.to_json()
+with open( "models/blackjackmodel.1.json", "w") as json_file:
+	json_file.write(model_json)
+# serialize weights to HDF5
+model.save_weights("models/blackjackmodel.1.h5")
+print( "Model saved" )
+</pre>
+
+To find a heuristic, hand values from 2-21 were tested on the classifier. To do this we need to first deserialize the model from its file
+
+<pre>
+# open serialized model
+# taken from https://machinelearningmastery.com/save-load-keras-deep-learning-models/
+json_file = open('models/blackjackmodel.1.json', 'r')
+loaded_model_json = json_file.read()
+json_file.close()
+model = keras.models.model_from_json( loaded_model_json, custom_objects={"GlorotUniform": tf.keras.initializers.glorot_uniform} )
+model.load_weights( "models/blackjackmodel.1.h5" )
+print( "Model loaded from disk" )
+</pre>
+
+Giving the test cases was done via
+
+<pre>
+print( "testing model" )
+
+for i in range(21):
+	prediction = model.predict( np.array([ [i,10] ]) )
+	if prediction[0][0] > prediction[0][1]:
+		print( str(i) + " stay" )
+	else:
+		print( str(i) + " hit" )
+</pre>
+
+This gave the output
 
 <pre>
 0
@@ -107,8 +200,6 @@ stay
 
 The model learned to hit on any hand value below 17. This happens to be the strategy used by the dealer.
 
-Future data sets and models will focus learning more about the hand, ie. dealers cards, counting how many times a player has hit, etc. The longer term goal is to teach a model to count cards.
-
 # second Blackjack model
 
 This model will use all the previous techniques, but the data set will now include the dealer's upward facing card.
@@ -119,36 +210,63 @@ Example
 
 [ 18, 13, s ]
 
-The data set consists of 5,323 entries, located in data_sets/blackjack.data.2 and data_sets/blackjack.tags.2.. The neural network used a similar layer scheme as the previous, with an 8-neuron second layer. The optimizer was 'nadam,' and there were 100 epochs.
+The data set for this consists of 5,323 entries, located in data_sets/blackjack.data.2 and data_sets/blackjack.tags.2. Loading the data is done the same as in model 1.
 
-The model has an accuracy of 0.74. A slightly better accuracy than model #1.
+The neural network used a similar layer scheme as the previous, with an 16-neuron second layer. The optimizer was 'nadam,' and there were 100 epochs.
 
-I found this nifty chart for Blackjack strategy at https://wizardofodds.com/games/blackjack/strategy/calculator/ . This will be compared to the results of the classifier
+code for training this network
+
+<pre>
+model = keras.Sequential()
+model.add( keras.layers.Dense(16, input_dim=2) )
+model.add( keras.layers.Dense(2, activation=tf.nn.softmax) )
+model.compile(optimizer='nadam',
+	loss='sparse_categorical_crossentropy',
+	metrics=['accuracy'])
+model.fit(train_data, train_tags, epochs=100)
+test_loss, test_acc = model.evaluate(test_data, test_tags)
+print('Test accuracy:', test_acc)
+</pre>
+
+Notice the only difference between the training of model 1 and model 2 is parameters and file names.
+
+For testing purposes I found this nifty chart for Blackjack strategy at https://wizardofodds.com/games/blackjack/strategy/calculator/ . 
 
 from wizardofodds.com
 ![Basic Blackjack Strategy](https://raw.githubusercontent.com/justinbodnar/artificial-intelligence-in-card-games/master/docs/blackjack_odds.png)
 
-from Blackjack model #2
-![Blackjack classifier results](https://raw.githubusercontent.com/justinbodnar/artificial-intelligence-in-card-games/master/docs/blackjack_odds_mine.png)
+Generating s imiliar table through the neural entwork can be done via
+
+<pre>
+results = []
+
+for i in range(0,17):
+	results = results + [ "" ]
+	for j in range(0,9):
+		prediction = model.predict( np.array([ [i+5,j+2] ] ) )
+		if prediction[0][0] > prediction[0][1]:
+			results[i] = results[i] + "s"
+		else:
+			results[i] = results[i] + "h"
+print( "  ", end="" )
+for x in range( len(results[0]) ):
+	print( " " + str( (x+4)%10 ), end="" )
+print( )
+for i in range( len(results) ):
+	print( i+5, end="" )
+	if i+5 < 10:
+		print( "  ", end="" )
+	else:
+		print( " ", end="" )
+	for j in range( len(results[i] ) ):
+		print( results[i][j], end=" " )
+	print( )
+</pre>
+
+This produces the following chart.
+
+[![Blackjack classifier results](https://raw.githubusercontent.com/justinbodnar/artificial-intelligence-in-card-games/master/docs/blackjack_odds_mine.png)
 
 There is a clear pattern on both. This confirms the neural network has begun to learn the strategy of Blackjack.
 
-
-# Deck.py
-Deck.py is a class for a deck of cards. An instance of this class holds an array of 52 strings representing cards. Card strings consist of the face value and a suit seperated by a hyphen. Face values { A, 2, ... Q, K } are represented as { 1, 2, ... 12, 13 }. Suits are { 's', 'd', 'c', 'h' }. Some examples of valid card strings are '1-s' for the ace of spades, '4-c' for the four of clubs, and '12-h' for the queen of hearts.
-
-Usage:
-
-from Deck import Deck
-deck = Deck()
-
-Functions
-	
-deck.shuffle()
-returns the array to 52 randomly organized card strings.
-
-deck.deal()
-removes a card string from the Deck object, and returns it
-
-deck.checkDeck()
-prints the current content of the deck
+The next model with contain information on which cards have been seen throughout the game, so that the model will learn to count cards.
