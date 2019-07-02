@@ -1,10 +1,10 @@
 # Artificial Intelligence in Blackjack Card Counting
 A python library for teaching TensorFlow neural networks to play Blackjack and count cards.
 
-# blackjack.py
+# Blackjack.py
 Blackjack.py is an implementation of the game using the Deck class, and played from the terminal. This script is used to generate data about hands of blackjack via Monte Carlo simulations. This is done by generating random hands and storing representations of the hands, tagged with the eventual outcome of the decision.
 
-# representing a hand of blackjack and generating your own data sets
+# Representing a hand of blackjack and generating your own data sets
 
 To generate a data set of Blackjack hands using Monte Carlo simulations use:
 
@@ -177,53 +177,32 @@ for i in range(21):
 This gave the output
 
 <pre>
-0
-hit
-1
-hit
-2
-hit
-3
-hit
-4
-hit
-5
-hit
-6
-hit
-7
-hit
-8
-hit
-9
-hit
-10
-hit
-11
-hit
-12
-hit
-13
-hit
-14
-hit
-15
-hit
-16
-hit
-17
-stay
-18
-stay
-19
-stay
-20
-stay
+0  hit
+1  hit
+2  hit
+3  hit
+4  hit
+5  hit
+6  hit
+7  hit
+8  hit
+9  hit
+10 hit
+11 hit
+12 hit
+13 hit
+14 hit
+15 hit
+16 hit
+17 stay
+18 stay
+19 stay
+20 stay
 </pre>
 
 The model learned to hit on any hand value below 17. This happens to be the strategy used by the dealer.
 
-# second Blackjack model
+# Second Blackjack model - data set level 2
 
 This model will use all the previous techniques, but the data set will now include the dealer's upward facing card.
 
