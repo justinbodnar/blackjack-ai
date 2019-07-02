@@ -2,7 +2,7 @@
 A python library for teaching TensorFlow neural networks to play Blackjack and count cards.
 
 # Blackjack.py
-Blackjack.py is an implementation of the game using the Deck class, and played from the terminal. This script is used to generate data about hands of blackjack via Monte Carlo simulations. This is done by generating random hands and storing representations of the hands, tagged with the eventual outcome of the decision.
+Blackjack.py is used to generate data sets about hands of blackjack via Monte Carlo simulations. This is done by generating random hands, letting the computer make random moves, and storing representations of the hands tagged with the eventual outcome of the decision.
 
 # Representing a hand of blackjack and generating your own data sets
 
@@ -21,7 +21,7 @@ Level 1 stores only information about the players hand value.
 Level 2 stores level 1 plus the dealers face-up card.
 Level 3 stores level 2 plus a record of all cards seen.
 
-For the purpose of training a nuerel network to play blackjack, we want to represent a hand in a way that tells us whether we should 'hit' or 'stay.' Luckily we only need to know the value of the hand, so we represent each scenario as a single integer, ie. a hand of ( 2-s, 10-h ) will be 12. We then tag the data as either 'h' or 's' for 'hit' or 'stay.'
+For the purpose of training a nuerel network to play blackjack, we want to represent a hand in a way that tells us whether we should 'hit' or 'stay.' Luckily we only need to store a few integers. We then tag the data as either 'h' or 's' for 'hit' or 'stay.'
 
 How we determine whether the hand warrants a 'h' or 's' is a matter of opinion. The current iteration will simply append in the following manner:
 
