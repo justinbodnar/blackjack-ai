@@ -48,9 +48,10 @@ train_data = np.array( data_clean[1:size] )
 train_tags = np.array( tags_clean[1:size] )
 test_data = np.array( data_clean[size:] )
 test_tags = np.array( tags_clean[size:] )
-'''
+
+
 model = keras.Sequential()
-model.add( keras.layers.Dense(16, input_dim=2) )
+model.add( keras.layers.Dense(16, input_dim=54) )
 model.add( keras.layers.Dense(2, activation=tf.nn.softmax) )
 
 model.compile(optimizer='nadam',
@@ -62,8 +63,8 @@ model.fit(train_data, train_tags, epochs=100)
 test_loss, test_acc = model.evaluate(test_data, test_tags)
 
 print('Test accuracy:', test_acc)
-'''
-'''
+
+
 # save model
 # taken from https://machinelearningmastery.com/save-load-keras-deep-learning-models/
 model_json = model.to_json()
@@ -72,6 +73,7 @@ with open( "models/blackjackmodel.2.json", "w") as json_file:
 # serialize weights to HDF5
 model.save_weights("models/blackjackmodel.2.h5")
 print( "Model saved" )
+
 '''
 # open serialized model
 # taken from https://machinelearningmastery.com/save-load-keras-deep-learning-models/
@@ -90,7 +92,7 @@ print( "testing model" )
 #		print( str(i) + " stay" )
 #	else:
 #		print( str(i) + " hit" )
-
+'''
 results = []
 
 for i in range(0,17):

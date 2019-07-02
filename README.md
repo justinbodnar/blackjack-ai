@@ -288,4 +288,13 @@ The next model with contain information on which cards have been seen throughout
 
 # Third Blackjack Model - data set level 3
 
-TO BE ADDED
+This model will use the same data as prevous models, but now it will also contain a record of every card so far seen. The simulation implies the dealer is using a single deck until it runs out of cards, and then reshuffles them.
+
+code to generate the data set
+
+<pre>
+import Blackjack as blackjack
+blackjack.gen_data_set( 1000, "test", 3 )
+</pre>
+
+

@@ -5,7 +5,10 @@ from Deck import Deck
 import random as rand
 
 # instantiate deck of cards
+global deck
 deck = Deck()
+
+
 
 # function to count the value of a given hand
 # 'player' param is 1 for player, 2 for dealer
@@ -35,8 +38,9 @@ def hand( montecarlo, level, debug ):
 	data = []
 	tags = []
 
-	# get cards ready
-	deck.shuffle()
+	if level < 3:
+		# get cards ready
+		deck.shuffle()
 
 	# instantiate two empty hands
 	dealers_hand = [ ]
@@ -93,6 +97,8 @@ def hand( montecarlo, level, debug ):
 				data = data + [ hand_value( players_hand ) ]
 			elif level is 2:
 				data = data + [ [ hand_value( players_hand ), int( dealers_hand[0][:dealers_hand[0].index('-')] ) ] ]
+			elif level is 3:
+				 data = data + [ [ hand_value( players_hand ), int( dealers_hand[0][:dealers_hand[0].index('-')] ) ] + deck.negation() ]
 			# hit
 			players_hand = players_hand + [ deck.deal() ]
 			summ = hand_value( players_hand )
@@ -128,6 +134,8 @@ def hand( montecarlo, level, debug ):
 				data = data + [ hand_value( players_hand ) ]
 			elif level is 2:
 				data = data + [ [ hand_value( players_hand ), int( dealers_hand[0][:dealers_hand[0].index('-')] ) ] ]
+			elif level is 3:
+				 data = data + [ [ hand_value( players_hand ), int( dealers_hand[0][:dealers_hand[0].index('-')] ) ] + deck.negation() ]
 			if debug:
 				print( "Staying" )
 				# print current game
@@ -195,11 +203,14 @@ def hand( montecarlo, level, debug ):
 def gen_data_set( num_of_games, name, level ):
 	# loop through a thousand simulations
 	for i in range( num_of_games ):
-		print( i )
 		data, tags = hand( True, level,  False )
 
-		print( data )
-		print( tags )
+		if len(data) < len(tags) or len(data) > len(tags):
+			print( "ERROR" )
+			print( data )
+			print( tags )
+
+
 
 		dataf = open( "data_sets/" + str(name) + ".data", "a" )
 		tagf = open( "data_sets/" + str(name) + ".tags", "a" )
@@ -209,3 +220,9 @@ def gen_data_set( num_of_games, name, level ):
 			tagf.write( tag  + "\n" )
 		dataf.close()
 		tagf.close()
+		# check if we need to reshuffle the deck
+		# only needed for data sel level 3
+		if level is 3:
+			if deck.cardinality() < 10:
+				deck.shuffle()
+
