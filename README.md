@@ -274,7 +274,7 @@ for i in range( len(results) ):
 
 This produces the following chart.
 
-[![Blackjack classifier results](https://raw.githubusercontent.com/justinbodnar/artificial-intelligence-in-card-games/master/docs/blackjack_odds_mine.png)
+![Blackjack classifier results](https://raw.githubusercontent.com/justinbodnar/artificial-intelligence-in-card-games/master/docs/blackjack_odds_mine.png)
 
 There is a clear pattern on both. This confirms the neural network has begun to learn the strategy of Blackjack.
 
