@@ -4,6 +4,13 @@ A python library for teaching TensorFlow neural networks to play Blackjack and c
 # Blackjack.py
 Blackjack.py is used to generate data sets about hands of blackjack via Monte Carlo simulations. This is done by generating random hands, letting the computer make random moves, and storing representations of the hands tagged with the eventual outcome of the decision.
 
+# Installation
+
+<pre>
+git clone https://github.com/justinbodnar/Artificial-Intelligence-in-BlackJack-Card-Counting.git
+pip install -r requirements.txt
+</pre>
+
 # Representing a hand of blackjack and generating your own data sets
 
 To generate a data set of Blackjack hands using Monte Carlo simulations use:
