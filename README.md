@@ -278,3 +278,7 @@ This produces the following chart.
 There is a clear pattern on both. This confirms the neural network has begun to learn the strategy of Blackjack.
 
 The next model with contain information on which cards have been seen throughout the game, so that the model will learn to count cards.
+
+# Third Blackjack Model - data set level 3
+
+TO BE ADDED
