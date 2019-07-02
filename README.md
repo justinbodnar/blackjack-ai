@@ -239,9 +239,8 @@ print('Test accuracy:', test_acc)
 
 Notice the only difference between the training of model 1 and model 2 is parameters and file names.
 
-For testing purposes I found this nifty chart for Blackjack strategy at https://wizardofodds.com/games/blackjack/strategy/calculator/ . 
+For testing purposes I found this nifty chart for Blackjack strategy at wizardofodds.com/games/blackjack/strategy/calculator/
 
-from wizardofodds.com
 ![Basic Blackjack Strategy](https://raw.githubusercontent.com/justinbodnar/artificial-intelligence-in-card-games/master/docs/blackjack_odds.png)
 
 Generating s imiliar table through the neural entwork can be done via
