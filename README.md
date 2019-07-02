@@ -4,7 +4,22 @@ A python library for teaching TensorFlow neural networks to play Blackjack and c
 # blackjack.py
 Blackjack.py is an implementation of the game using the Deck class, and played from the terminal. This script is used to generate data about hands of blackjack via Monte Carlo simulations. This is done by generating random hands and storing representations of the hands, tagged with the eventual outcome of the decision.
 
-# representing a hand of blackjack
+# representing a hand of blackjack and generating your own data sets
+
+To generate a data set of Blackjack hands using Monte Carlo simulations use:
+
+<pre>
+import Blackjack as blackjack
+blackjack.gen_data_set( 100, "test", 1 )
+</pre>
+
+The first parameter is how many hands to play (note the data set may be larger as each 'hit' will generate another data point).
+The second parameter is the name of the file to save to in the '/data_sets' directory. the example code will create two files '/data_sets/test.data' and '/data_sets/test.tags' If the data set already exists the new data points will be appended.
+The third paramter is the level of information to put in the dataset.
+
+Level 1 stores only information about the players hand value.
+Level 2 stores level 1 plus the dealers face-up card.
+Level 3 stores level 2 plus a record of all cards seen.
 
 For the purpose of training a nuerel network to play blackjack, we want to represent a hand in a way that tells us whether we should 'hit' or 'stay.' Luckily we only need to know the value of the hand, so we represent each scenario as a single integer, ie. a hand of ( 2-s, 10-h ) will be 12. We then tag the data as either 'h' or 's' for 'hit' or 'stay.'
 
@@ -52,9 +67,17 @@ generated data and tag
 14, s
 </pre>
 
-# first Blackjack model
+# first Blackjack model - data set level 1
 
 The first model teaches a neural net to play based soley on the value of the current hand. A data set for this task was produced with 3,959 monte carlo simulations generated with Blackjack.py. The data set is located at /data_sets/blackjack.data.1 and /data_sets/blackjack.tags.1.
+
+code to create this data set
+
+<pre>
+import Blackjack as bj
+bj.gen_data_set( 3000, "blackjack1", 1 ) # this was renamed later
+</pre>
+
 
 code for preprocessing the data set
 
@@ -211,6 +234,13 @@ Example
 [ 18, 13, s ]
 
 The data set for this consists of 5,323 entries, located in data_sets/blackjack.data.2 and data_sets/blackjack.tags.2. Loading the data is done the same as in model 1.
+
+code to generate this data set
+
+<pre>
+import Blackjack as bj
+bj.gen_data_set( 4000, "test", 2 ) # this was renamed later
+</pre>
 
 The neural network used a similar layer scheme as the previous, with an 16-neuron second layer. The optimizer was 'nadam,' and there were 100 epochs.
 

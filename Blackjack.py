@@ -26,7 +26,10 @@ def hand_value( hand ):
 ############################
 # function for single hand #
 ############################
-def hand( montecarlo, debug ):
+# level 1: only gather data about the players cards
+# level 2: gather level 1 AND the dealers face up card
+# level 3: gather level 2 AND the history of which cards have been seen
+def hand( montecarlo, level, debug ):
 
 	# these lists are for collecting data
 	data = []
@@ -86,7 +89,10 @@ def hand( montecarlo, debug ):
 		# if hitting
 		if choice is "h":
 			# add data
-			data = data + [ [ hand_value( players_hand ), int( dealers_hand[0][:dealers_hand[0].index('-')] ) ] ]
+			if level is 1:
+				data = data + [ hand_value( players_hand ) ]
+			elif level is 2:
+				data = data + [ [ hand_value( players_hand ), int( dealers_hand[0][:dealers_hand[0].index('-')] ) ] ]
 			# hit
 			players_hand = players_hand + [ deck.deal() ]
 			summ = hand_value( players_hand )
@@ -118,7 +124,10 @@ def hand( montecarlo, debug ):
 		# if staying
 		else:
 			# add data
-			data = data + [ [ hand_value( players_hand ), int( dealers_hand[0][:dealers_hand[0].index('-')] ) ] ]
+			if level is 1:
+				data = data + [ hand_value( players_hand ) ]
+			elif level is 2:
+				data = data + [ [ hand_value( players_hand ), int( dealers_hand[0][:dealers_hand[0].index('-')] ) ] ]
 			if debug:
 				print( "Staying" )
 				# print current game
@@ -183,17 +192,17 @@ def hand( montecarlo, debug ):
 
 # function to add some number of
 # data points to the blackjack data set
-def gen_data_set( ):
+def gen_data_set( num_of_games, name, level ):
 	# loop through a thousand simulations
-	for i in range( 2000 ):
+	for i in range( num_of_games ):
 		print( i )
-		data, tags = hand( True, False )
+		data, tags = hand( True, level,  False )
 
 		print( data )
 		print( tags )
 
-		dataf = open( "data_sets/blackjack.data.2", "a" )
-		tagf = open( "data_sets/blackjack.tags.2", "a" )
+		dataf = open( "data_sets/" + str(name) + ".data", "a" )
+		tagf = open( "data_sets/" + str(name) + ".tags", "a" )
 		for datum in data:
 			dataf.write( str( datum ) + "\n" )
 		for tag in tags:
