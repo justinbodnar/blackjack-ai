@@ -290,11 +290,37 @@ The next model with contain information on which cards have been seen throughout
 
 This model will use the same data as prevous models, but now it will also contain a record of every card so far seen. The simulation implies the dealer is using a single deck until it runs out of cards, and then reshuffles them.
 
+The data set used contains roughyl 16,979 data points and can be found at /data_sets/blackjack.data.3 and /data_sets/blackjack.tags.3.
+
 code to generate the data set
 
 <pre>
 import Blackjack as blackjack
-blackjack.gen_data_set( 1000, "test", 3 )
+blackjack.gen_data_set( 12000, "test", 3 )
 </pre>
 
+The third model has a two hidden layer of 64 and 128 neurons respectively. The optimizer was 'adam' and there were 50 epochs. The serialized model can be found at /models/blackjackmodel.3.json and /models/blackjackmodel.3.h5.
 
+code used to train the neural net
+
+<pre>
+model = keras.Sequential()
+model.add( keras.layers.Dense( 54, input_dim=54 ) )
+model.add( keras.layers.Dense( 64, input_dim=26 ) )
+model.add( keras.layers.Dense( 128, input_dim=13 ) )
+model.add( keras.layers.Dense(2, activation=tf.nn.softmax) )
+
+model.compile(optimizer='adam',
+        loss='sparse_categorical_crossentropy',
+        metrics=['accuracy'])
+
+model.fit(train_data, train_tags, epochs=50)
+
+test_loss, test_acc = model.evaluate(test_data, test_tags)
+
+print('Test accuracy:', test_acc)
+</pre>
+
+The model had an accuracy of 0.73, similiar to the last two models.
+
+Testing of this model has not yet been implemented. Please check back for this feature.

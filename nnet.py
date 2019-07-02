@@ -13,9 +13,13 @@ import matplotlib.pyplot as plt
 # introduction
 print( "TensorFlow Version: " + tf.__version__ )
 
+# this line added to avoid accidental overwriting of data_sets and models
+exit()
+
+
 # get the data set
-data = open( "data_sets/blackjack.data.2").readlines()
-tags = open( "data_sets/blackjack.tags.2").readlines()
+data = open( "data_sets/test.data").readlines()
+tags = open( "data_sets/test.tags").readlines()
 data_clean = []
 tags_clean = []
 #strip whitespace
@@ -28,7 +32,7 @@ for datum in data:
 	clean_datum = datum[1:datum.index('\n')-1].strip().split(', ')
 	clean_datum[0] = int( clean_datum[0] )
 	clean_datum[1] = int( clean_datum[1] )
-	print( clean_datum )
+#	print( clean_datum )
 	data_clean = data_clean + [ clean_datum ]
 
 first = True
@@ -51,14 +55,16 @@ test_tags = np.array( tags_clean[size:] )
 
 
 model = keras.Sequential()
-model.add( keras.layers.Dense(16, input_dim=54) )
+model.add( keras.layers.Dense( 54, input_dim=54 ) )
+model.add( keras.layers.Dense( 64, input_dim=26 ) )
+model.add( keras.layers.Dense( 128, input_dim=13 ) )
 model.add( keras.layers.Dense(2, activation=tf.nn.softmax) )
 
-model.compile(optimizer='nadam',
+model.compile(optimizer='adam',
 	loss='sparse_categorical_crossentropy',
 	metrics=['accuracy'])
 
-model.fit(train_data, train_tags, epochs=100)
+model.fit(train_data, train_tags, epochs=50)
 
 test_loss, test_acc = model.evaluate(test_data, test_tags)
 
@@ -68,10 +74,10 @@ print('Test accuracy:', test_acc)
 # save model
 # taken from https://machinelearningmastery.com/save-load-keras-deep-learning-models/
 model_json = model.to_json()
-with open( "models/blackjackmodel.2.json", "w") as json_file:
+with open( "models/blackjackmodel.3.json", "w") as json_file:
 	json_file.write(model_json)
 # serialize weights to HDF5
-model.save_weights("models/blackjackmodel.2.h5")
+model.save_weights("models/blackjackmodel.3.h5")
 print( "Model saved" )
 
 '''
@@ -92,6 +98,7 @@ print( "testing model" )
 #		print( str(i) + " stay" )
 #	else:
 #		print( str(i) + " hit" )
+'''
 '''
 results = []
 
@@ -117,6 +124,7 @@ for i in range( len(results) ):
 		print( results[i][j], end=" " )
 	print( )
 
+'''
 test_loss, test_acc = model.evaluate(test_data, test_tags)
 
 print('Test accuracy:', test_acc)
