@@ -14,12 +14,12 @@ import matplotlib.pyplot as plt
 print( "TensorFlow Version: " + tf.__version__ )
 
 # this line added to avoid accidental overwriting of data_sets and models
-exit()
+#exit()
 
 
 # get the data set
-data = open( "data_sets/test.data").readlines()
-tags = open( "data_sets/test.tags").readlines()
+data = open( "data_sets/blackjack.data.1").readlines()
+tags = open( "data_sets/blackjack.tags.1").readlines()
 data_clean = []
 tags_clean = []
 #strip whitespace
@@ -70,7 +70,7 @@ test_loss, test_acc = model.evaluate(test_data, test_tags)
 
 print('Test accuracy:', test_acc)
 
-
+'''
 # save model
 # taken from https://machinelearningmastery.com/save-load-keras-deep-learning-models/
 model_json = model.to_json()
@@ -79,7 +79,7 @@ with open( "models/blackjackmodel.3.json", "w") as json_file:
 # serialize weights to HDF5
 model.save_weights("models/blackjackmodel.3.h5")
 print( "Model saved" )
-
+'''
 '''
 # open serialized model
 # taken from https://machinelearningmastery.com/save-load-keras-deep-learning-models/
@@ -110,7 +110,9 @@ for i in range(0,17):
 			results[i] = results[i] + "s"
 		else:
 			results[i] = results[i] + "h"
+
 print( "  ", end="" )
+
 for x in range( len(results[0]) ):
 	print( " " + str( (x+4)%10 ), end="" )
 print( )
