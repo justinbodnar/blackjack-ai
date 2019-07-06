@@ -3,15 +3,15 @@
 
 from Deck import Deck
 import random as rand
+import tensorflow as tf
+import keras
+import numpy as np
 
 # instantiate deck of cards
 global deck
 deck = Deck()
 
-
-
-# function to count the value of a given hand
-# 'player' param is 1 for player, 2 for dealer
+# function to count the value of a hand
 def hand_value( hand ):
 
 	summ = 0
@@ -82,9 +82,10 @@ def hand( montecarlo, level, debug ):
 
 	# hit up to 5 times
 	for i in range(5):
+
 		#  hit or stay?
 		if montecarlo:
-			choice = choices[rand.randint(0,1)]
+			choice = rand.choice( ["h","s"] )
 #			choice = "h"
 		else:
 			print( "Hit or stay? (Enter 'h' or 's'): " )
@@ -219,10 +220,13 @@ def test_model( model_name, num_of_tests, fresh_deck, level, debug ):
 	json_file.close()
 	model = keras.models.model_from_json( loaded_model_json, custom_objects={"GlorotUniform": tf.keras.initializers.glorot_uniform} )
 	model.load_weights( "models/"+model_name+".h5" )
-	print( "Model loaded from disk" )
+	print( "Model " + model_name + " loaded from disk" )
 
 	# get deck ready
 	deck = Deck()
+
+	# random choices
+	choices = [ 'h', 's' ]
 
 	# loop through the number of tests parameter
 	for i in range( num_of_tests ):
@@ -231,7 +235,7 @@ def test_model( model_name, num_of_tests, fresh_deck, level, debug ):
 		data = []
 
 		# check if we need to shuffle
-		if fresh_deck or deck.cardinality < 10:
+		if fresh_deck or deck.cardinality() < 15:
 			deck.shuffle()
 
 		# instantiate two empty hands
@@ -275,15 +279,26 @@ def test_model( model_name, num_of_tests, fresh_deck, level, debug ):
 		# hit up to 5 times
 		for j in range(5):
 
-			#  hit or stay?
+			# add data
 			if level is 1:
-				data = data + [ hand_value( players_hand ) ]
+				data = [ hand_value( players_hand ) ]
 			elif level is 2:
-				data = data + [ [ hand_value( players_hand ), int( dealers_hand[0][:dealers_hand[0].index('-')] ) ] ]
+				data = [ [ hand_value( players_hand ), int( dealers_hand[0][:dealers_hand[0].index('-')] ) ] ]
 			elif level is 3:
-				 data = data + [ [ hand_value( players_hand ), int( dealers_hand[0][:dealers_hand[0].index('-')] ) ] + deck.negation() ]
-			prediction = model.predict( np.array([ data ] ) )
-			prediction = "h"
+				 data = [ [ hand_value( players_hand ), int( dealers_hand[0][:dealers_hand[0].index('-')] ) ] + deck.negation() ]
+
+
+			prediction = model.predict( np.array( data ) )
+			if prediction[0][0] > prediction[0][1]:
+				choice = "s"
+			else:
+				choice = "h"
+
+			# temp code to generate random choice
+#			choice = rand.choice( [ 'h', 's' ] )
+#			choice = "s"
+
+			#print( i, choice )
 
 			# if hitting
 			if choice is "h":
@@ -300,7 +315,6 @@ def test_model( model_name, num_of_tests, fresh_deck, level, debug ):
 					print( "Player: " + players_hand_str )
 				if summ > 21:
 					# add tag
-					tags = tags + [ 's' ]
 					if debug:
 						print( "Bust." )
 						print( "PLAYER LOSES" )
@@ -308,25 +322,23 @@ def test_model( model_name, num_of_tests, fresh_deck, level, debug ):
 					continue
 				elif summ is 21:
 					# add tag
-					tags = tags + [ 'h' ]
 					if debug:
 						print( "21" )
 					wins = wins + 1
 					continue
 				else:
 					# add tag
-					tags = tags + [ 'h' ]
 					players_summ = summ
-	
+
 			# if staying
 			else:
 				# add data
 				if level is 1:
-					data = data + [ hand_value( players_hand ) ]
+					data = [ hand_value( players_hand ) ]
 				elif level is 2:
-					data = data + [ [ hand_value( players_hand ), int( dealers_hand[0][:dealers_hand[0].index('-')] ) ] ]
+					data = [ [ hand_value( players_hand ), int( dealers_hand[0][:dealers_hand[0].index('-')] ) ] ]
 				elif level is 3:
-					 data = data + [ [ hand_value( players_hand ), int( dealers_hand[0][:dealers_hand[0].index('-')] ) ] + deck.negation() ]
+					 data = [ [ hand_value( players_hand ), int( dealers_hand[0][:dealers_hand[0].index('-')] ) ] + deck.negation() ]
 				if debug:
 					print( "Staying" )
 					# print current game
@@ -347,7 +359,6 @@ def test_model( model_name, num_of_tests, fresh_deck, level, debug ):
 				summ = hand_value( dealers_hand )
 				if summ > 21:
 					# add tag
-					tags = tags + [ 's' ]
 					if debug:
 						dealers_hand_str = ""
 						for card in dealers_hand:
@@ -359,7 +370,6 @@ def test_model( model_name, num_of_tests, fresh_deck, level, debug ):
 					wins = wins + 1
 				elif summ is 21:
 					# add tag
-					tags = tags + [ 'h' ]
 					if debug:
 						dealers_hand_str = ""
 						for card in dealers_hand:
@@ -378,27 +388,23 @@ def test_model( model_name, num_of_tests, fresh_deck, level, debug ):
 						print( "Player: " + players_hand_str )
 					if summ > players_summ:
 						# add tag
-						tags = tags + [ 'h' ]
 						if debug:
 							print( "PLAYER LOSES" )
 						losses = losses + 1
 					else:
 						# add tag
-						tags = tags + [ 's' ]
 						if debug:
 							print( "PLAYER WINS" )
 						wins = wins + 1
-	# now we print statistics
-	print( "Wins:   " + str(wins) )
-	print( "Losses: " + str(losses) )
-	print( "Ties:   " + str(ties) )
+	# return stats
+	return float(wins), float(losses), float(ties)
 
-	
 # function to add some number of
 # data points to the blackjack data set
-def gen_data_set( num_of_games, name, level ):
-	# loop through a thousand simulations
+def gen_data_set( num_of_games, name, level, shuffle ):
+	# loop through simulations
 	for i in range( num_of_games ):
+		print( i )
 		data, tags = hand( True, level,  False )
 
 		if len(data) < len(tags) or len(data) > len(tags):
@@ -417,8 +423,11 @@ def gen_data_set( num_of_games, name, level ):
 		dataf.close()
 		tagf.close()
 		# check if we need to reshuffle the deck
-		# only needed for data sel level 3
-		if level is 3:
-			if deck.cardinality() < 10:
+		# only needed for data set level 3
+		print( deck.cardinality() )
+		if shuffle:
+			deck.shuffle()
+		else:
+			if deck.cardinality() < 15:
 				deck.shuffle()
 
