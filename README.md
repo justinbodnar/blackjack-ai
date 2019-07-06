@@ -86,7 +86,7 @@ bj.gen_data_set( 3000, "blackjack1", 1 ) # this was renamed later
 </pre>
 
 
-code for preprocessing the data set
+code for preprocessing the level 1 data set
 
 <pre>
 # get the data set
@@ -297,6 +297,46 @@ code to generate the data set
 <pre>
 import Blackjack as blackjack
 blackjack.gen_data_set( 12000, "test", 3 )
+</pre>
+
+code for preprocessing the level 3 data set
+
+<pre>
+# get the data set
+data = open( "data_sets/blackjack.data.1").readlines()
+tags = open( "data_sets/blackjack.tags.1").readlines()
+data_clean = []
+tags_clean = []
+#strip whitespace
+first = True
+for datum in data:
+	# skip empty line first
+	if first:
+		first = False
+		continue
+	clean_datum = datum[1:datum.index('\n')-1].strip().split(', ')
+	clean_datum[0] = int( clean_datum[0] )
+	clean_datum[1] = int( clean_datum[1] )
+	print( clean_datum )
+	data_clean = data_clean + [ clean_datum ]
+
+first = True
+for tag in tags:
+	if first:
+		first = False
+		continue
+	tag = tag[:tag.index('\n')]
+	if tag is "h":
+		tags_clean = tags_clean + [ 1.0 ]
+	else:
+		tags_clean = tags_clean + [ 0.0 ]
+
+size = int( len(data)*(0.75) )
+
+train_data = np.array( data_clean[1:size] )
+train_tags = np.array( tags_clean[1:size] )
+test_data = np.array( data_clean[size:] )
+test_tags = np.array( tags_clean[size:] )
 </pre>
 
 The third model has a two hidden layer of 64 and 128 neurons respectively. The optimizer was 'adam' and there were 50 epochs. The serialized model can be found at /models/blackjackmodel.3.json and /models/blackjackmodel.3.h5.
