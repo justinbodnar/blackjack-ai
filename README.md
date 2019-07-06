@@ -449,15 +449,20 @@ print( "Percentage tied: " + str( tie_percentage ) )
 
 The win percentage for 10,000 games for this model is 41.33%. This is less accurate than all other models that used less information about the game. This implies the data set is incorrect, corrupt, etc. This will be revisited in future revisions.
 
-# Issue regarding the data sets
+# Issues regarding the data sets
 
 The completed table for the tests comes out to:
 
 level 1:        51.82%
+
 level 2:        41.49%
+
 level 3:        41.33%
+
 only hitting:    3.42%
+
 only staying:   41.99%
+
 random moves:   30.67%
 
 Level 1 is the most accurate model, and the model deteriorates as we gain more information about the game. The data sets clearly need some work. The best classifier is only 9.17% better than simply staying for every hand. Levels 2 and 3 are slightly lower than only staying, though the difference is negligible.
