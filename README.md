@@ -90,22 +90,22 @@ code for preprocessing the level 1 data set
 
 <pre>
 # get the data set
-data = open( "data_sets/blackjack.data.1").readlines()
-tags = open( "data_sets/blackjack.tags.1").readlines()
+data = open( "data_sets/blackjack2-2-out.data").readlines()
+tags = open( "data_sets/blackjack2-2-out.tags").readlines()
 data_clean = []
 tags_clean = []
-#strip whitespace
+
+#strip whitespaces and such
 first = True
+i = 0
 for datum in data:
+
 	# skip empty line first
 	if first:
 		first = False
 		continue
-	clean_datum = datum[1:datum.index('\n')-1].strip().split(', ')
-	clean_datum[0] = int( clean_datum[0] )
-	clean_datum[1] = int( clean_datum[1] )
-	print( clean_datum )
-	data_clean = data_clean + [ clean_datum ]
+	clean_datum = datum[:datum.index('\n')].strip()
+	data_clean = data_clean + [ int(clean_datum) ]
 
 first = True
 for tag in tags:
@@ -124,6 +124,7 @@ train_data = np.array( data_clean[1:size] )
 train_tags = np.array( tags_clean[1:size] )
 test_data = np.array( data_clean[size:] )
 test_tags = np.array( tags_clean[size:] )
+
 </pre>
 
 The model in this example a dense 2-layer neurel network. The first layer contained 4096 neurons, while the second only had two, for 'hit' or 'stay.' The 'adam' optimizer was used, with a loss of 'sparse_categorical_crossentropy.' Training and testing data was split 50/50 randomly. There are 10 epochs.
@@ -209,6 +210,20 @@ This gave the output
 
 The model learned to hit on any hand value below 17. This happens to be the strategy used by the dealer.
 
+To test the model against a large number of monte carlo simulations, we can use the test_model() function in Blackjack.py. The command is
+
+<pre>
+wins, losses, ties = test_model( "blackjackmodel.1", 10000, True, 1, False )
+total = wins + losses + ties
+win_percentage = (wins/total)*100.0
+loss_percentage = (losses/total)*100.0
+tie_percentage = (ties/total)*100.0
+print( "Percentage won:  " + str( win_percentage ) )
+
+</pre>
+
+The win percentage for 10,000 games for this model is 52.42%.
+
 # Second Blackjack model - data set level 2
 
 This model will use all the previous techniques, but the data set will now include the dealer's upward facing card.
@@ -226,6 +241,49 @@ code to generate this data set
 <pre>
 import Blackjack as bj
 bj.gen_data_set( 4000, "test", 2 ) # this was renamed later
+</pre>
+
+Code to grab the data from the data set
+
+<pre>
+# get the data set
+data = open( "data_sets/blackjack2-2-out.data").readlines()
+tags = open( "data_sets/blackjack2-2-out.tags").readlines()
+data_clean = []
+tags_clean = []
+#strip whitespace
+first = True
+i = 0
+for datum in data:
+
+	# skip empty line first
+	if first:
+		first = False
+		continue
+	clean_datum = datum[:datum.index('\n')].strip()
+	clean_datum = clean_datum[1:-1].split(',')
+	clean_datum[0] = int( clean_datum[0] )
+	clean_datum[1] = int( clean_datum[1][1:] )
+	print( clean_datum )
+	data_clean = data_clean + [ clean_datum ]
+
+first = True
+for tag in tags:
+	if first:
+		first = False
+		continue
+	tag = tag[:tag.index('\n')]
+	if tag is "h":
+		tags_clean = tags_clean + [ 1.0 ]
+	else:
+		tags_clean = tags_clean + [ 0.0 ]
+
+size = int( len(data)*(0.75) )
+
+train_data = np.array( data_clean[1:size] )
+train_tags = np.array( tags_clean[1:size] )
+test_data = np.array( data_clean[size:] )
+test_tags = np.array( tags_clean[size:] )
 </pre>
 
 The neural network used a similar layer scheme as the previous, with an 16-neuron second layer. The optimizer was 'nadam,' and there were 100 epochs.
@@ -284,7 +342,20 @@ This produces the following chart.
 
 There is a clear pattern on both. This confirms the neural network has begun to learn the strategy of Blackjack.
 
-The next model with contain information on which cards have been seen throughout the game, so that the model will learn to count cards.
+To test the model against a large number of monte carlo simulations, we can use the test_model() function in Blackjack.py. The command is
+
+<pre>
+wins, losses, ties = test_model( "blackjackmodel.2", 10000, True, 2, False )
+total = wins + losses + ties
+win_percentage = (wins/total)*100.0
+loss_percentage = (losses/total)*100.0
+tie_percentage = (ties/total)*100.0
+print( "Percentage won:  " + str( win_percentage ) )
+print( "Percentage lost: " + str( loss_percentage ) )
+print( "Percentage tied: " + str( tie_percentage ) )
+</pre>
+
+The win percentage for 10,000 games for this model is 41.49%. Interestingly, this is less accurate than the model that used less information about the game. This implies the data set is incorrect, corrupt, etc. This will be revisited in future revisions.
 
 # Third Blackjack Model - data set level 3
 
@@ -363,4 +434,42 @@ print('Test accuracy:', test_acc)
 
 The model had an accuracy of 0.73, similiar to the last two models.
 
-Testing of this model has not yet been implemented. Please check back for this feature.
+To test the model against a large number of monte carlo simulations, we can use the test_model() function in Blackjack.py. The command is
+
+<pre>
+wins, losses, ties = test_model( "blackjackmodel.3", 10000, True, 3, False )
+total = wins + losses + ties
+win_percentage = (wins/total)*100.0
+loss_percentage = (losses/total)*100.0
+tie_percentage = (ties/total)*100.0
+print( "Percentage won:  " + str( win_percentage ) )
+print( "Percentage lost: " + str( loss_percentage ) )
+print( "Percentage tied: " + str( tie_percentage ) )
+</pre>
+
+The win percentage for 10,000 games for this model is 41.33%. This is less accurate than all other models that used less information about the game. This implies the data set is incorrect, corrupt, etc. This will be revisited in future revisions.
+
+# Issue regarding the data sets
+
+The completed table for the tests comes out to:
+
+level 1:        51.82%
+level 2:        41.49%
+level 3:        41.33%
+only hitting:    3.42%
+only staying:   41.99%
+random moves:   30.67%
+
+Level 1 is the most accurate model, and the model deteriorates as we gain more information about the game. The data sets clearly need some work. The best classifier is only 9.17% better than simply staying for every hand. Levels 2 and 3 are slightly lower than only staying, though the difference is negligible.
+
+Potential issues:
+
+-repeating hands
+-different conclusions in the same scenario results in opposite tags
+
+In an attempt to rectify these issue a script was written in /data_sets/preproc.py for preprocessing data sets before training models. The script serves 2 functions:
+
+- if opposing data points are found, the one with the lower number of instances is removed
+- duplicates are removed
+
+The script cant be run without being modified. TODO includes functionalizing this script and including it in Blackjack.py.

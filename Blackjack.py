@@ -405,29 +405,29 @@ def gen_data_set( num_of_games, name, level, shuffle ):
 	# loop through simulations
 	for i in range( num_of_games ):
 		print( i )
-		data, tags = hand( True, level,  False )
+		try:
+			data, tags = hand( True, level,  False )
 
-		if len(data) < len(tags) or len(data) > len(tags):
-			print( "ERROR" )
-			print( data )
-			print( tags )
+			if len(data) < len(tags) or len(data) > len(tags):
+				print( "ERROR" )
+				print( data )
+				print( tags )
 
 
 
-		dataf = open( "data_sets/" + str(name) + ".data", "a" )
-		tagf = open( "data_sets/" + str(name) + ".tags", "a" )
-		for datum in data:
-			dataf.write( str( datum ) + "\n" )
-		for tag in tags:
-			tagf.write( tag  + "\n" )
-		dataf.close()
-		tagf.close()
-		# check if we need to reshuffle the deck
-		# only needed for data set level 3
-		print( deck.cardinality() )
-		if shuffle:
-			deck.shuffle()
-		else:
-			if deck.cardinality() < 15:
+			dataf = open( "data_sets/" + str(name) + ".data", "a" )
+			tagf = open( "data_sets/" + str(name) + ".tags", "a" )
+			for datum in data:
+				dataf.write( str( datum ) + "\n" )
+			for tag in tags:
+				tagf.write( tag  + "\n" )
+			dataf.close()
+			tagf.close()
+			# check if we need to reshuffle the deck
+			# only needed for data set level 3
+#			print( deck.cardinality() )
+			if shuffle:
 				deck.shuffle()
-
+		except Exception as e:
+			print( e )
+			deck.shuffle()
