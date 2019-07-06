@@ -18,21 +18,20 @@ print( "TensorFlow Version: " + tf.__version__ )
 
 
 # get the data set
-data = open( "data_sets/blackjack.data.1").readlines()
-tags = open( "data_sets/blackjack.tags.1").readlines()
+data = open( "data_sets/blackjack.data.3").readlines()
+tags = open( "data_sets/blackjack.tags.3").readlines()
 data_clean = []
 tags_clean = []
 #strip whitespace
 first = True
 for datum in data:
-	# skip empty line first
 	if first:
 		first = False
 		continue
 	clean_datum = datum[1:datum.index('\n')-1].strip().split(', ')
 	clean_datum[0] = int( clean_datum[0] )
 	clean_datum[1] = int( clean_datum[1] )
-#	print( clean_datum )
+	print( clean_datum )
 	data_clean = data_clean + [ clean_datum ]
 
 first = True
