@@ -361,7 +361,7 @@ The win percentage for 10,000 games for this model is 41.49%. Interestingly, thi
 
 This model will use the same data as prevous models, but now it will also contain a record of every card so far seen. The simulation implies the dealer is using a single deck until it runs out of cards, and then reshuffles them.
 
-The data set used contains roughyl 16,979 data points and can be found at /data_sets/blackjack.data.3 and /data_sets/blackjack.tags.3.
+The data set used contains roughly 16,979 data points and can be found at /data_sets/blackjack.data.3 and /data_sets/blackjack.tags.3.
 
 code to generate the data set
 
