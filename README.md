@@ -134,7 +134,7 @@ bj.gen_data_set( 3000, "blackjack1", 1 ) # this was renamed later
 ### Preprocessing Level 1 Datset
 
 <pre>
-# get the data set
+# get the dataset
 data = open( "data_sets/blackjack2-2-out.data").readlines()
 tags = open( "data_sets/blackjack2-2-out.tags").readlines()
 data_clean = []
@@ -273,7 +273,7 @@ print( "Percentage won:  " + str( win_percentage ) )
 
 The win percentage for this model, tested over 10,000 games, is **52.42%**.
 
-# Second Blackjack model - data set level 2
+# Second Blackjack model - Dataset Level 2
 
 This model builds upon the previous techniques by including the dealer's face-up card in the dataset.
 
@@ -307,7 +307,7 @@ bj.gen_data_set( 4000, "test", 2 ) # this was renamed later
 ### Preprocessing Level 2 Dataset
 
 <pre>
-# get the data set
+# get the dataset
 data = open( "data_sets/blackjack2-2-out.data").readlines()
 tags = open( "data_sets/blackjack2-2-out.tags").readlines()
 data_clean = []
@@ -439,7 +439,7 @@ blackjack.gen_data_set( 12000, "test", 3 )
 ### Preprocessing Level 3 Dataset
 
 <pre>
-# get the data set
+# get the dataset
 data = open( "data_sets/blackjack.data.1").readlines()
 tags = open( "data_sets/blackjack.tags.1").readlines()
 data_clean = []
@@ -517,7 +517,7 @@ print( "Percentage tied: " + str( tie_percentage ) )
 
 The win percentage for 10,000 games with this model is **41.33%**. This result is less accurate than all other models that used less information about the game. This suggests that the dataset may be incorrect, corrupt, or otherwise flawed. This issue will be revisited in future revisions.
 
-# Issues regarding the data sets
+# Issues regarding the datasets
 
 ### 
 
