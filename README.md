@@ -2,6 +2,8 @@
 
 A Python library designed for training TensorFlow neural networks to play Blackjack and implement card-counting strategies. This project serves as both a practice ground for improving AI/ML skills and an educational tool for students exploring canonical AI/ML problems, such as decision-making and strategy optimization in Blackjack.
 
+For more information on `Deck.py`, please read [the Deck.py documentation](DECK.md)
+
 ## Blackjack.py
 
 The `Blackjack.py` module is responsible for generating datasets of Blackjack hands using Monte Carlo simulations. It creates randomized hands, simulates decision-making processes, and stores structured representations of these hands along with their corresponding outcomes.
